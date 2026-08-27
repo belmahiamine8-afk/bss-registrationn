@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belmahi Samir School — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --navy-1:#161046; --navy-2:#2b1f7a; --indigo:#3a2f9e;
+    --gold:#c23b3b; --gold-dark:#8f2626; --cream:#f6f5fb; --card:#ffffff;
+    --line:#e3e1f2; --text:#211c3d; --muted:#6c6688;
+    --good:#3aa876; --avg:#e8c547; --weak:#d9534f; --excellent:#5b4bd6;
+    --radius:16px; --shadow:0 10px 30px -12px rgba(22,16,70,0.25);
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Cairo', system-ui, sans-serif; margin:0; background:var(--cream); color:var(--text);}
+  .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 60px;}
+  .topbar{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .topbar .seal{width:42px;height:42px;border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--indigo), var(--navy-1) 75%);
+    border:2px solid var(--gold); color:var(--gold); font-weight:900; display:flex;align-items:center;justify-content:center;}
+  .topbar h1{font-size:17px; margin:0;}
+  .topbar .sub{font-size:12px; color:var(--muted);}
+
+  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:8px 0 20px;}
+  .hidden{display:none !important;}
+
+  .lockbox{padding:60px 22px; text-align:center; max-width:340px; margin:0 auto;}
+  .lockbox input{width:100%; margin:14px 0; padding:13px 14px; border-radius:10px; border:1.6px solid var(--line); font-size:15px; text-align:center; font-family:inherit;}
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:14.5px; padding:12px 18px; border-radius:11px;}
+  .btn-primary{background:linear-gradient(90deg, var(--gold-dark), var(--gold)); color:var(--navy-1); width:100%;}
+  .btn-ghost{background:transparent; color:var(--indigo); border:1.6px solid var(--line);}
+  .status{font-size:13.5px; font-weight:700; min-height:18px; margin-top:4px;}
+  .status.err{color:var(--weak);}
+
+  .stats{display:flex; gap:12px; padding:18px 22px 6px; flex-wrap:wrap;}
+  .stat{flex:1; min-width:130px; background:#fbfbfe; border:1.6px solid var(--line); border-radius:12px; padding:14px; text-align:center;}
+  .stat .n{font-size:24px; font-weight:900; color:var(--navy-2);}
+  .stat .l{font-size:12px; color:var(--muted); font-weight:700;}
+
+  .toolbar{display:flex; gap:10px; padding:14px 22px; flex-wrap:wrap; align-items:center;}
+  .toolbar input[type=text]{flex:1; min-width:200px; padding:10px 13px; border-radius:10px; border:1.6px solid var(--line); font-family:inherit;}
+
+  .tablewrap{padding:0 22px; overflow-x:auto;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:1000px;}
+  th,td{padding:9px 10px; border-bottom:1px solid var(--line); text-align:left; white-space:nowrap;}
+  th{background:#fbfbfe; color:var(--muted); font-weight:800; font-size:11px; text-transform:uppercase;}
+  tr:hover td{background:#f9f8ff;}
+  td input.group-edit{width:80px; padding:6px 8px; border-radius:7px; border:1.4px solid var(--line); font-family:inherit; font-size:12px;}
+  .tag{display:inline-block; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:800; color:#fff;}
+  .del{background:none; border:none; color:var(--weak); font-weight:800; cursor:pointer; font-size:12px;}
+  .thumb{width:34px;height:34px;border-radius:8px;object-fit:cover; border:1px solid var(--line);}
+  .link{color:var(--indigo); font-weight:700; font-size:12px;}
+  .empty{padding:40px 22px; text-align:center; color:var(--muted);}
+  .note-txt{max-width:160px; white-space:normal; font-size:11.5px; color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="seal">S</div>
+    <div><h1>Belmahi Samir School</h1><div class="sub">Staff dashboard · لوحة تحكم الإدارة (خاصة، لا تشاركها)</div></div>
+  </div>
+
+  <div class="card">
+    <div id="lockView" class="lockbox">
+      <div style="font-weight:800;font-size:16px;">دخول الإدارة · Admin access</div>
+      <input type="password" id="adminPass" placeholder="كلمة السر · Password">
+      <button class="btn btn-primary" onclick="tryUnlock()">Unlock</button>
+      <div class="status err" id="lockStatus"></div>
+    </div>
+
+    <div id="dashView" class="hidden">
+      <div class="stats">
+        <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Total registrations</div></div>
+        <div class="stat"><div class="n" id="statToday">0</div><div class="l">Today</div></div>
+        <div class="stat"><div class="n" id="statNoGroup">0</div><div class="l">Awaiting group</div></div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="searchBox" placeholder="بحث بالإسم، الهاتف، الثانوية… search">
+        <button class="btn btn-ghost" onclick="refreshAdmin()">↻ Refresh</button>
+        <button class="btn btn-primary" style="width:auto;" onclick="exportExcel()">⬇ Export Excel</button>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Photo</th><th>First</th><th>Last</th><th>DOB</th>
+              <th>Parent phone</th><th>Student phone</th><th>High school</th><th>Stream</th>
+              <th>Level</th><th>Avg</th><th>Subjects</th><th>Note</th><th>Signature</th><th>Group</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="regTbody"></tbody>
+        </table>
+      </div>
+      <div class="empty hidden" id="emptyState">لا توجد تسجيلات بعد · No registrations yet</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====================== CONFIG ======================
+   Must match the Apps Script deployment used by register.html,
+   and ADMIN_TOKEN must match the constant inside your Apps Script code. */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyO0RW23Rl0g2h1HWiHsHvpDiCcn6P9wPKYWFnp4X_oA3ZEvl4DpHzkPJCSegkzQ9NE7Q/exec";
+const ADMIN_PASSWORD = "kursi123"; // change this before publishing
+/* ===================================================== */
+
+let unlocked = false;
+let cache = [];
+
+function tryUnlock(){
+  const val = document.getElementById('adminPass').value;
+  if(val === ADMIN_PASSWORD){
+    unlocked = true;
+    document.getElementById('lockView').classList.add('hidden');
+    document.getElementById('dashView').classList.remove('hidden');
+    refreshAdmin();
+  }else{
+    document.getElementById('lockStatus').textContent = "كلمة سر خاطئة · wrong password";
+  }
+}
+document.getElementById('adminPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+
+async function refreshAdmin(){
+  const tbody = document.getElementById('regTbody');
+  tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;color:var(--muted);">Loading…</td></tr>';
+  if(APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
+    tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;color:var(--weak);">⚠️ Backend not configured (APPS_SCRIPT_URL)</td></tr>';
+    return;
+  }
+  try{
+    const url = APPS_SCRIPT_URL + "?token=" + encodeURIComponent(ADMIN_PASSWORD);
+    const res = await fetch(url);
+    const json = await res.json();
+    if(!json.ok) throw new Error(json.error || "unauthorized");
+    cache = json.rows || [];
+    cache.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+    renderTable(cache);
+    renderStats(cache);
+  }catch(e){
+    console.error(e);
+    tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;color:var(--weak);">Could not load data</td></tr>';
+  }
+}
+
+function renderStats(rows){
+  document.getElementById('statTotal').textContent = rows.length;
+  const today = new Date().toDateString();
+  document.getElementById('statToday').textContent = rows.filter(r=> new Date(r.createdAt).toDateString()===today).length;
+  document.getElementById('statNoGroup').textContent = rows.filter(r=> !r.group).length;
+}
+function levelColor(l){
+  return l==='Excellent' ? 'var(--excellent)' : l==='Good' ? 'var(--good)' : l==='Average' ? 'var(--avg)' : l==='Weak' ? 'var(--weak)' : '#999';
+}
+function escapeHtml(s){
+  if(s===undefined || s===null) return '';
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function renderTable(rows){
+  const tbody = document.getElementById('regTbody');
+  const empty = document.getElementById('emptyState');
+  tbody.innerHTML = '';
+  if(rows.length===0){ empty.classList.remove('hidden'); return; } else { empty.classList.add('hidden'); }
+
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    const photoCell = r.photoUrl ? `<a class="link" href="${r.photoUrl}" target="_blank"><img class="thumb" src="${r.photoUrl}"></a>` : '—';
+    const sigCell = r.signatureUrl ? `<a class="link" href="${r.signatureUrl}" target="_blank">View</a>` : '—';
+    tr.innerHTML = `
+      <td>${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</td>
+      <td>${photoCell}</td>
+      <td>${escapeHtml(r.firstName)}</td>
+      <td>${escapeHtml(r.lastName)}</td>
+      <td>${r.dob || ''}</td>
+      <td>${escapeHtml(r.parentPhone)}</td>
+      <td>${escapeHtml(r.studentPhone||'')}</td>
+      <td>${escapeHtml(r.highSchool||'')}</td>
+      <td>${escapeHtml(r.stream||'')}</td>
+      <td>${r.level ? `<span class="tag" style="background:${levelColor(r.level)}">${r.level}</span>` : ''}</td>
+      <td>${r.average||''}</td>
+      <td>${r.subjects||''}</td>
+      <td class="note-txt">${escapeHtml(r.note||'')}</td>
+      <td>${sigCell}</td>
+      <td><input class="group-edit" data-id="${r.id}" value="${escapeHtml(r.group||'')}" placeholder="—"></td>
+      <td><button class="del" data-id="${r.id}">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('.group-edit').forEach(inp=>{
+    inp.addEventListener('change', async ()=>{
+      const id = inp.dataset.id;
+      try{
+        await fetch(APPS_SCRIPT_URL, {
+          method:"POST",
+          headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body: JSON.stringify({action:"updateGroup", id, group: inp.value.trim()})
+        });
+      }catch(e){ console.error(e); }
+    });
+  });
+  tbody.querySelectorAll('.del').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('حذف هذا التسجيل؟ Delete this registration?')) return;
+      const id = btn.dataset.id;
+      try{
+        await fetch(APPS_SCRIPT_URL, {
+          method:"POST",
+          headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body: JSON.stringify({action:"delete", id})
+        });
+        refreshAdmin();
+      }catch(e){ console.error(e); }
+    });
+  });
+}
+
+document.getElementById('searchBox').addEventListener('input', (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  if(!q){ renderTable(cache); return; }
+  const filtered = cache.filter(r =>
+    (String(r.firstName)+' '+String(r.lastName)+' '+String(r.parentPhone)+' '+String(r.studentPhone)+' '+String(r.highSchool)+' '+String(r.group||'')).toLowerCase().includes(q)
+  );
+  renderTable(filtered);
+});
+
+function exportExcel(){
+  if(cache.length===0){ alert('No data to export · لا توجد بيانات للتصدير'); return; }
+  const rows = cache.map(r=>({
+    "Registration #": r.regCode,
+    "Date registered": r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '',
+    "First Name": r.firstName, "Last Name": r.lastName,
+    "Place of Birth": r.placeOfBirth, "Date of Birth": r.dob,
+    "Parent Phone": r.parentPhone, "Student Phone": r.studentPhone,
+    "Address": r.address, "High School": r.highSchool,
+    "Stream": r.stream, "Level": r.level, "Passing Average /20": r.average,
+    "Subjects": r.subjects, "Note": r.note, "Group": r.group,
+    "Photo": r.photoUrl, "Signature": r.signatureUrl
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Registrations");
+  XLSX.writeFile(wb, "Belmahi_Samir_School_Registrations.xlsx");
+}
+</script>
+</body>
+</html>
