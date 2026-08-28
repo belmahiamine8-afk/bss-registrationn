@@ -191,7 +191,12 @@
           <div class="field"><label>Place of Birth <span class="req">*</span><span class="ar">مكان الإزدياد</span></label>
             <input type="text" name="placeOfBirth" required></div>
           <div class="field"><label>Date of Birth <span class="req">*</span><span class="ar">تاريخ الإزدياد</span></label>
-            <input type="date" name="dob" required max="2026-12-31"></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1.3fr; gap:8px;">
+              <select id="dobDay" required><option value="" disabled selected>يوم Day</option></select>
+              <select id="dobMonth" required><option value="" disabled selected>شهر Month</option></select>
+              <select id="dobYear" required><option value="" disabled selected>سنة Year</option></select>
+            </div>
+          </div>
           <div class="field"><label>Parent's Phone <span class="req">*</span><span class="ar">رقم هاتف الولي</span></label>
             <input type="tel" name="parentPhone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="0XXXXXXXXX"></div>
           <div class="field"><label>Student's Phone <span class="req">*</span><span class="ar">رقم هاتف الطالب</span></label>
@@ -262,7 +267,7 @@
             <div class="photo-box">
               <img id="photoPreview" class="photo-preview" style="display:none;">
               <label class="photo-btn" for="photoInput">📷 اختر / التقط صورة</label>
-              <input type="file" id="photoInput" accept="image/*" capture="environment">
+              <input type="file" id="photoInput" accept="image/*">
             </div>
           </div>
 
@@ -341,6 +346,24 @@ function testEntry(){
     return;
   }
   showOnly("regForm");
+})();
+
+// ---- date of birth dropdowns ----
+(function fillDob(){
+  const dayEl = document.getElementById('dobDay');
+  const monthEl = document.getElementById('dobMonth');
+  const yearEl = document.getElementById('dobYear');
+  for(let d=1; d<=31; d++){
+    const o = document.createElement('option'); o.value=String(d).padStart(2,'0'); o.textContent=d; dayEl.appendChild(o);
+  }
+  const months = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+  const monthNames = ["01 Jan","02 Feb","03 Mar","04 Apr","05 May","06 Jun","07 Jul","08 Aug","09 Sep","10 Oct","11 Nov","12 Dec"];
+  months.forEach((m,i)=>{
+    const o = document.createElement('option'); o.value=m; o.textContent=monthNames[i]; monthEl.appendChild(o);
+  });
+  for(let y=2026; y>=1970; y--){
+    const o = document.createElement('option'); o.value=String(y); o.textContent=y; yearEl.appendChild(o);
+  }
 })();
 
 // ---- phone fields: digits only, max 10 ----
@@ -434,7 +457,16 @@ el('regForm').addEventListener('submit', async (e)=>{
     statusEl.className = "status err";
     return;
   }
-  if(f.dob.value && new Date(f.dob.value) > new Date("2026-12-31")){
+  const dobDay = document.getElementById('dobDay').value;
+  const dobMonth = document.getElementById('dobMonth').value;
+  const dobYear = document.getElementById('dobYear').value;
+  if(!dobDay || !dobMonth || !dobYear){
+    statusEl.textContent = "الرجاء اختيار تاريخ الإزدياد كاملاً · please select a complete date of birth";
+    statusEl.className = "status err";
+    return;
+  }
+  const dobValue = `${dobYear}-${dobMonth}-${dobDay}`;
+  if(new Date(dobValue) > new Date("2026-12-31")){
     statusEl.textContent = "تاريخ الإزدياد غير صالح · date of birth cannot be after 2026";
     statusEl.className = "status err";
     return;
@@ -470,7 +502,7 @@ el('regForm').addEventListener('submit', async (e)=>{
     firstName: f.firstName.value.trim(),
     lastName: f.lastName.value.trim(),
     placeOfBirth: f.placeOfBirth.value.trim(),
-    dob: f.dob.value,
+    dob: dobValue,
     parentPhone: f.parentPhone.value.trim(),
     studentPhone: f.studentPhone.value.trim(),
     address: f.address.value.trim(),
@@ -487,6 +519,7 @@ el('regForm').addEventListener('submit', async (e)=>{
   try{
     await fetch(APPS_SCRIPT_URL, {
       method: "POST",
+      mode: "no-cors",
       headers: {"Content-Type": "text/plain;charset=utf-8"},
       body: JSON.stringify(payload)
     });
