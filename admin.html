@@ -105,24 +105,37 @@
 
 <script>
 /* ====================== CONFIG ======================
-   Must match the Apps Script deployment used by register.html,
-   and ADMIN_TOKEN must match the constant inside your Apps Script code. */
+   Must match the Apps Script deployment used by register.html.
+   NOTE: there is intentionally no password stored here anymore —
+   whatever the admin types is checked by the Apps Script server itself. */
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyO0RW23Rl0g2h1HWiHsHvpDiCcn6P9wPKYWFnp4X_oA3ZEvl4DpHzkPJCSegkzQ9NE7Q/exec";
-const ADMIN_PASSWORD = "kursi123"; // change this before publishing
 /* ===================================================== */
 
 let unlocked = false;
+let sessionToken = ""; // held only in memory for this browser tab, never written to any file
 let cache = [];
 
-function tryUnlock(){
-  const val = document.getElementById('adminPass').value;
-  if(val === ADMIN_PASSWORD){
-    unlocked = true;
-    document.getElementById('lockView').classList.add('hidden');
-    document.getElementById('dashView').classList.remove('hidden');
-    refreshAdmin();
-  }else{
-    document.getElementById('lockStatus').textContent = "كلمة سر خاطئة · wrong password";
+async function tryUnlock(){
+  const val = document.getElementById('adminPass').value.trim();
+  const lockStatus = document.getElementById('lockStatus');
+  if(!val){ lockStatus.textContent = "الرجاء إدخال كلمة السر"; return; }
+  lockStatus.textContent = "جاري التحقق… checking…";
+  try{
+    const url = APPS_SCRIPT_URL + "?token=" + encodeURIComponent(val);
+    const res = await fetch(url);
+    const json = await res.json();
+    if(json.ok){
+      sessionToken = val; // kept in memory only for this tab
+      unlocked = true;
+      document.getElementById('lockView').classList.add('hidden');
+      document.getElementById('dashView').classList.remove('hidden');
+      refreshAdmin();
+    }else{
+      lockStatus.textContent = "كلمة سر خاطئة · wrong password";
+    }
+  }catch(e){
+    console.error(e);
+    lockStatus.textContent = "تعذر الاتصال بالسيرفر · could not reach server";
   }
 }
 document.getElementById('adminPass').addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
@@ -135,7 +148,7 @@ async function refreshAdmin(){
     return;
   }
   try{
-    const url = APPS_SCRIPT_URL + "?token=" + encodeURIComponent(ADMIN_PASSWORD);
+    const url = APPS_SCRIPT_URL + "?token=" + encodeURIComponent(sessionToken);
     const res = await fetch(url);
     const json = await res.json();
     if(!json.ok) throw new Error(json.error || "unauthorized");
@@ -202,7 +215,7 @@ function renderTable(rows){
           method:"POST",
           mode:"no-cors",
           headers:{"Content-Type":"text/plain;charset=utf-8"},
-          body: JSON.stringify({action:"updateGroup", id, group: inp.value.trim()})
+          body: JSON.stringify({action:"updateGroup", id, group: inp.value.trim(), token: sessionToken})
         });
       }catch(e){ console.error(e); }
     });
@@ -216,7 +229,7 @@ function renderTable(rows){
           method:"POST",
           mode:"no-cors",
           headers:{"Content-Type":"text/plain;charset=utf-8"},
-          body: JSON.stringify({action:"delete", id})
+          body: JSON.stringify({action:"delete", id, token: sessionToken})
         });
         refreshAdmin();
       }catch(e){ console.error(e); }
