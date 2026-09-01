@@ -66,7 +66,7 @@
   main{padding:0 16px;}
   .card{
     background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-    margin-top:-20px; position:relative; z-index:1; padding:0 0 4px; overflow:hidden;
+    margin-top:-20px; position:relative; z-index:1; padding:0 0 100px; overflow:hidden;
     animation: card-rise .5s cubic-bezier(.22,1,.36,1) both;
   }
   @keyframes card-rise{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
@@ -168,8 +168,16 @@
   .agree .txt{font-size:13px; line-height:1.6;}
   .agree .txt .ar{direction:rtl; display:block; color:var(--muted); margin-top:2px;}
 
-  /* nav buttons */
-  .nav-bar{ display:flex; gap:10px; padding:18px 20px calc(18px + env(safe-area-inset-bottom)); }
+  /* nav buttons — fixed to the bottom of the screen so they're always reachable */
+  .nav-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:10;
+    max-width:480px; margin:0 auto;
+    display:flex; gap:10px;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,0.94); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-top:1.6px solid var(--line);
+    box-shadow:0 -8px 20px -10px rgba(22,16,70,0.15);
+  }
   .btn{border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:15.5px;
     padding:15px 18px; border-radius:15px; transition:transform .12s, filter .12s, box-shadow .12s;}
   .btn:active{transform:scale(0.97);}
