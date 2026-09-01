@@ -85,6 +85,17 @@
   .dots span.dot-done{ background:var(--red); }
   .dots span.active{ background:var(--indigo); }
 
+  .scroll-hint{ display:flex; justify-content:center; gap:2px; margin-top:6px; height:14px; }
+  .scroll-hint .chev{
+    font-size:15px; line-height:1; color:var(--muted); font-weight:900;
+    animation: scroll-bounce 1.5s ease-in-out infinite;
+  }
+  .scroll-hint .chev2{ animation-delay:.18s; }
+  @keyframes scroll-bounce{
+    0%,100%{ transform:translateY(0); opacity:0.35; }
+    50%{ transform:translateY(4px); opacity:0.85; }
+  }
+
   /* ---------- steps ---------- */
   .steps-viewport{ overflow:hidden; }
   .steps-track{ display:flex; transition: transform .38s cubic-bezier(.65,0,.35,1); }
@@ -351,6 +362,9 @@
           <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
           <div class="dots" id="dots">
             <span class="active"></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="scroll-hint" aria-hidden="true">
+            <span class="chev">⌄</span><span class="chev chev2">⌄</span>
           </div>
         </div>
 
