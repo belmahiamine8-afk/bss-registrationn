@@ -9,131 +9,294 @@
 <style>
   :root{
     --navy-1:#161046; --navy-2:#2b1f7a; --indigo:#3a2f9e;
-    --gold:#c23b3b; --gold-dark:#8f2626; --cream:#f6f5fb; --card:#ffffff;
-    --line:#e3e1f2; --text:#211c3d; --muted:#6c6688;
+    --red:#c23b3b; --red-dark:#8f2626; --cream:#f6f5fb; --card:#ffffff;
+    --line:#e7e5f3; --text:#211c3d; --muted:#6c6688;
     --good:#3aa876; --avg:#e8c547; --weak:#d9534f; --excellent:#5b4bd6;
-    --radius:16px; --shadow:0 10px 30px -12px rgba(22,16,70,0.25);
+    --radius:20px; --shadow:0 14px 36px -14px rgba(22,16,70,0.28);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     font-family:'Cairo', system-ui, sans-serif; color:var(--text);
-    background:radial-gradient(1000px 400px at 90% -10%, rgba(194,59,59,0.08), transparent), var(--cream);
+    background:var(--cream);
     min-height:100vh; -webkit-font-smoothing:antialiased;
     padding-bottom:env(safe-area-inset-bottom);
+    overflow-x:hidden;
+    position:relative;
   }
-  .wrap{max-width:480px; margin:0 auto; padding:0 0 100px;}
+  .hidden{display:none !important;}
 
-  /* header */
+  /* ---------- ambient "alive" background stars ---------- */
+  .star{ position:fixed; z-index:5; pointer-events:none;
+    clip-path: polygon(50% 0%, 61% 35%, 100% 50%, 61% 65%, 50% 100%, 39% 65%, 0% 50%, 39% 35%);
+    animation: twinkle 6.5s ease-in-out infinite; filter:drop-shadow(0 1px 3px rgba(0,0,0,0.25)); }
+  @keyframes twinkle{
+    0%,100%{ transform:scale(0.85) rotate(0deg); opacity:0.18; }
+    50%{ transform:scale(1.05) rotate(8deg); opacity:0.5; }
+  }
+  .star-1{ width:14px; height:14px; top:8%;  right:10%; background:var(--red);    animation-delay:0s; }
+  .star-2{ width:9px;  height:9px;  top:20%; right:26%; background:var(--indigo); animation-delay:1.2s; }
+  .star-3{ width:11px; height:11px; top:15%; left:8%;   background:var(--indigo); animation-delay:2.1s; }
+  .star-4{ width:8px;  height:8px;  top:38%; left:18%;  background:var(--red);    animation-delay:3s; }
+  .star-5{ width:13px; height:13px; bottom:22%; left:6%; background:var(--indigo); animation-delay:.7s; }
+  .star-6{ width:9px;  height:9px;  bottom:12%; right:14%; background:var(--red);  animation-delay:3.6s; }
+  .star-7{ width:10px; height:10px; bottom:35%; right:6%; background:var(--indigo); animation-delay:2.6s; }
+  .star-8{ width:7px;  height:7px;  top:55%; left:4%;   background:var(--red);    animation-delay:4.3s; }
+
+  .wrap{max-width:480px; margin:0 auto; padding:0 0 100px; position:relative; z-index:1;}
+
+  /* ---------- header ---------- */
   .brandbar{
-    background:linear-gradient(135deg, var(--navy-1), var(--navy-2) 60%, var(--indigo)); /* fallback if photo is missing */
-    color:#fff; padding:28px 20px 40px; text-align:center; position:relative; overflow:hidden;
-    min-height:210px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--navy-1), var(--navy-2) 60%, var(--indigo));
+    color:#fff; padding:26px 20px 38px; text-align:center; position:relative; overflow:hidden;
+    min-height:190px; display:flex; flex-direction:column; align-items:center; justify-content:center;
   }
-  .brandbar .bg-photo{
-    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
-  }
-  .brandbar .bg-overlay{
-    position:absolute; inset:0; z-index:0;
-    background:linear-gradient(180deg, rgba(22,16,70,0.30) 0%, rgba(22,16,70,0.88) 100%);
-  }
-  /* LINE ~44: school logo image. Replace the src below with your logo file
-     (e.g. "logo.png" placed in the same folder as this html file). */
-  .logo-img{ width:82px; height:82px; object-fit:contain; border-radius:50%;
-    background:#fff; padding:8px; box-shadow:0 6px 16px rgba(0,0,0,0.25); position:relative; z-index:1; }
-  .brandbar h1{margin:14px 0 2px; font-size:22px; font-weight:900; position:relative; z-index:1;}
-  .brandbar .tagline{font-size:13px; color:rgba(255,255,255,0.85); position:relative; z-index:1;}
-  .brandbar .eyebrow{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); font-weight:700; position:relative; z-index:1;}
+  .brandbar .bg-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+  .brandbar .bg-overlay{ position:absolute; inset:0; z-index:0;
+    background:linear-gradient(180deg, rgba(22,16,70,0.30) 0%, rgba(22,16,70,0.88) 100%); }
+  /* LINE ~54: school logo. Replace src="logo.png" with your logo file. */
+  .logo-img{ width:76px; height:76px; object-fit:contain; border-radius:50%;
+    background:#fff; padding:8px; box-shadow:0 6px 16px rgba(0,0,0,0.25); position:relative; z-index:1;
+    animation: pop-in .6s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes pop-in{ from{ transform:scale(0.4); opacity:0;} to{ transform:scale(1); opacity:1;} }
+  .brandbar h1{margin:12px 0 2px; font-size:21px; font-weight:900; position:relative; z-index:1;}
+  .brandbar .tagline{font-size:12.5px; color:rgba(255,255,255,0.85); position:relative; z-index:1;}
+  .brandbar .eyebrow{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:#ff9c9c; font-weight:700; position:relative; z-index:1;}
 
   main{padding:0 16px;}
-  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); margin-top:-22px; position:relative; z-index:1; padding:6px 0 4px;}
+  .card{
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    margin-top:-20px; position:relative; z-index:1; padding:0 0 4px; overflow:hidden;
+    animation: card-rise .5s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes card-rise{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
 
-  .section{padding:20px 18px 4px;}
-  .section-head{display:inline-flex; align-items:center; gap:9px;
-    background:linear-gradient(90deg, var(--navy-2), var(--indigo)); color:#fff; font-weight:800;
-    font-size:13.5px; padding:8px 16px; border-radius:999px; margin-bottom:16px;}
-  .section-head .num{background:var(--gold); color:var(--navy-1); font-weight:900; width:20px;height:20px;
-    border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:11.5px;}
+  /* ---------- progress ---------- */
+  .progress-zone{ padding:18px 20px 6px; }
+  .progress-track{ height:6px; border-radius:99px; background:var(--line); overflow:hidden; }
+  .progress-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg, var(--red-dark), var(--red));
+    width:20%; transition:width .45s cubic-bezier(.65,0,.35,1); }
+  .progress-label{ display:flex; justify-content:space-between; align-items:center; margin-top:9px; }
+  .progress-label .step-name{ font-weight:800; font-size:13.5px; color:var(--navy-2); }
+  .progress-label .step-count{ font-size:11.5px; color:var(--muted); font-weight:700; }
+  .dots{ display:flex; gap:6px; margin-top:10px; width:100%; }
+  .dots span{ flex:1 1 0; min-width:0; height:4px !important; max-height:4px !important;
+    border-radius:99px; background:var(--line); transition:background .3s; display:block; }
+  .dots span.dot-done{ background:var(--red); }
+  .dots span.active{ background:var(--indigo); }
 
-  .field{margin-bottom:16px;}
-  .field label{display:block; font-weight:700; font-size:14px; margin-bottom:6px;}
-  .field label .ar{display:block; direction:rtl; font-weight:600; color:var(--muted); font-size:13px; margin-top:1px;}
+  /* ---------- steps ---------- */
+  .steps-viewport{ overflow:hidden; }
+  .steps-track{ display:flex; transition: transform .38s cubic-bezier(.65,0,.35,1); }
+  .step{ min-width:100%; padding:18px 20px 4px; }
+
+  .step-title{ display:flex; align-items:center; gap:9px; font-weight:900; font-size:15.5px; color:var(--navy-2); margin-bottom:16px; }
+  .step-title .ic{ width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg, var(--red-dark), var(--red));
+    color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px; flex:0 0 auto; }
+
+  .field{margin-bottom:15px; animation: field-in .35s ease both;}
+  @keyframes field-in{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+  .field label{display:block; font-weight:700; font-size:13.5px; margin-bottom:6px;}
+  .field label .ar{display:block; direction:rtl; font-weight:600; color:var(--muted); font-size:12.5px; margin-top:1px;}
   .field label .req{color:var(--weak); margin-inline-start:3px;}
   .field input, .field select, .field textarea{
-    width:100%; padding:13px 14px; border-radius:11px; border:1.6px solid var(--line);
+    width:100%; padding:13px 14px; border-radius:14px; border:1.8px solid var(--line);
     font-family:inherit; font-size:16px; color:var(--text); background:#fbfbfe;
+    transition:border-color .18s, box-shadow .18s, background .18s;
   }
   .field input:focus, .field select:focus, .field textarea:focus{
-    outline:none; border-color:var(--indigo); box-shadow:0 0 0 3px rgba(58,47,158,0.12);
+    outline:none; border-color:var(--indigo); background:#fff;
+    box-shadow:0 0 0 4px rgba(58,47,158,0.12);
   }
+  .field input:valid:not(:placeholder-shown), .field select:valid{ border-color:#cfead9; }
   .field textarea{resize:vertical; min-height:70px;}
-  .field .hint{font-size:12px; color:var(--muted); margin-top:5px;}
+  .field .err-msg{ font-size:11.5px; color:var(--weak); font-weight:700; margin-top:5px; display:none; }
+  .field.invalid .err-msg{ display:block; }
+  .field.invalid input, .field.invalid select{ border-color:var(--weak); animation: shake .3s; }
+  @keyframes shake{ 20%,60%{transform:translateX(-4px);} 40%,80%{transform:translateX(4px);} }
 
   .level-row{display:flex; flex-direction:column; gap:9px;}
-  .level-opt{display:flex; align-items:center; gap:10px; border:1.6px solid var(--line);
-    padding:12px 14px; border-radius:12px; font-weight:700; font-size:14.5px; background:#fbfbfe;}
+  .level-opt{display:flex; align-items:center; gap:10px; border:1.8px solid var(--line);
+    padding:12px 14px; border-radius:14px; font-weight:700; font-size:14px; background:#fbfbfe;
+    transition:border-color .18s, box-shadow .18s, transform .12s;}
+  .level-opt:active{ transform:scale(0.98); }
   .level-opt input{width:18px;height:18px; accent-color:var(--indigo);}
   .level-opt .dot{width:14px;height:14px;border-radius:50%;}
-  .level-opt.sel{border-color:var(--indigo); box-shadow:0 0 0 3px rgba(58,47,158,0.10);}
+  .level-opt.sel{border-color:var(--indigo); box-shadow:0 0 0 4px rgba(58,47,158,0.10);}
 
   .chk-row{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
-  .chk-opt{display:flex; align-items:center; gap:8px; border:1.6px solid var(--line);
-    padding:11px 12px; border-radius:11px; font-size:13.5px; font-weight:600; background:#fbfbfe;}
+  .chk-opt{display:flex; align-items:center; gap:8px; border:1.8px solid var(--line);
+    padding:11px 12px; border-radius:14px; font-size:13px; font-weight:600; background:#fbfbfe;
+    transition:border-color .18s, transform .12s;}
+  .chk-opt:active{ transform:scale(0.97); }
   .chk-opt input{width:17px;height:17px; accent-color:var(--indigo);}
+  .chk-opt.sel{ border-color:var(--red); background:#fdf3f3; }
 
   /* signature */
-  .sig-wrap canvas{width:100%; height:170px; border:1.6px solid var(--line); border-radius:12px;
+  .sig-wrap canvas{width:100%; height:170px; border:1.8px solid var(--line); border-radius:14px;
     background:#fff; touch-action:none; display:block;}
   .sig-actions{display:flex; justify-content:flex-end; margin-top:8px;}
   .sig-actions button{background:none;border:none;color:var(--indigo);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;}
 
   /* photo */
   .photo-box{display:flex; align-items:center; gap:12px;}
-  .photo-preview{width:64px;height:64px;border-radius:12px;object-fit:cover;background:#eee;border:1.6px solid var(--line); flex:0 0 auto;}
-  .photo-btn{flex:1; padding:13px 14px; border-radius:11px; border:1.6px dashed var(--indigo);
-    background:#fbfbfe; color:var(--indigo); font-weight:700; font-size:14px; text-align:center; cursor:pointer;}
+  .photo-preview{width:64px;height:64px;border-radius:14px;object-fit:cover;background:#eee;border:1.8px solid var(--line); flex:0 0 auto;}
+  .photo-btn{flex:1; padding:13px 14px; border-radius:14px; border:1.8px dashed var(--indigo);
+    background:#fbfbfe; color:var(--indigo); font-weight:700; font-size:14px; text-align:center; cursor:pointer;
+    transition:transform .12s;}
+  .photo-btn:active{ transform:scale(0.98); }
   input[type=file]{display:none;}
 
-  .agree{display:flex; gap:10px; align-items:flex-start; background:#fbfbfe; border:1.6px dashed var(--line);
-    border-radius:12px; padding:14px 16px;}
+  /* rules button + agree */
+  .rules-btn{
+    width:100%; display:flex; align-items:center; gap:12px; padding:14px 16px;
+    border-radius:14px; border:1.8px solid var(--line); background:#fbfbfe; cursor:pointer;
+    font-family:inherit; text-align:right; transition:border-color .18s, background .18s;
+  }
+  .rules-btn.accepted{ border-color:var(--good); background:#f2fbf6; }
+  .rules-btn .ric{ width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, var(--navy-2), var(--indigo));
+    color:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; flex:0 0 auto; }
+  .rules-btn.accepted .ric{ background:linear-gradient(135deg, #2e8f63, var(--good)); }
+  .rules-btn .rtxt{ flex:1; }
+  .rules-btn .rtxt b{ display:block; font-size:14px; }
+  .rules-btn .rtxt span{ display:block; font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .rules-btn .chev{ color:var(--muted); font-size:13px; }
+
+  .agree{display:flex; gap:10px; align-items:flex-start; background:#fbfbfe; border:1.8px dashed var(--line);
+    border-radius:14px; padding:14px 16px; margin-top:12px;}
   .agree input{margin-top:3px; width:18px;height:18px; accent-color:var(--indigo);}
-  .agree .txt{font-size:13.5px; line-height:1.6;}
+  .agree .txt{font-size:13px; line-height:1.6;}
   .agree .txt .ar{direction:rtl; display:block; color:var(--muted); margin-top:2px;}
 
-  .submit-bar{position:sticky; bottom:0; background:linear-gradient(to top, var(--cream) 60%, transparent);
-    padding:14px 16px calc(14px + env(safe-area-inset-bottom));}
-  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:16px;
-    padding:15px 18px; border-radius:13px; width:100%;}
-  .btn-primary{background:linear-gradient(90deg, var(--gold-dark), var(--gold)); color:var(--navy-1); box-shadow:var(--shadow);}
-  .btn-primary:disabled{opacity:0.55;}
-  .status{font-size:13.5px; font-weight:700; text-align:center; min-height:18px; margin-top:8px;}
+  /* nav buttons */
+  .nav-bar{ display:flex; gap:10px; padding:18px 20px calc(18px + env(safe-area-inset-bottom)); }
+  .btn{border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:15.5px;
+    padding:15px 18px; border-radius:15px; transition:transform .12s, filter .12s, box-shadow .12s;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:linear-gradient(90deg, var(--red-dark), var(--red)); color:#fff; box-shadow:0 10px 22px -10px rgba(194,59,59,0.55); flex:1;}
+  .btn-primary:disabled{
+    background:#e4e2ef; color:#9691b3; box-shadow:none; cursor:not-allowed;
+  }
+  .btn-ghost{background:#fff; color:var(--navy-2); border:1.8px solid var(--line);}
+  .status{font-size:13px; font-weight:700; text-align:center; min-height:18px; margin-top:2px; padding:0 20px;}
   .status.err{color:var(--weak);}
   .status.ok{color:var(--good);}
 
-  /* gate / done screens */
-  .gate, .done, .already{padding:60px 26px; text-align:center;}
-  .gate .icon, .done .icon, .already .icon{font-size:44px; margin-bottom:14px;}
-  .gate h2, .done h2, .already h2{margin:0 0 8px; font-size:19px;}
-  .gate p, .done p, .already p{color:var(--muted); font-size:14px; line-height:1.7;}
-  .regcode{margin-top:18px; padding:14px 16px; border-radius:12px;
-    background:linear-gradient(90deg, rgba(58,47,158,0.08), rgba(224,168,60,0.10)); border:1.6px solid var(--line);}
+  /* gate / done / already screens */
+  .gate, .done, .already{padding:56px 26px; text-align:center;}
+  .gate .icon, .already .icon{font-size:42px; margin-bottom:14px;}
+  .gate h2, .done h2, .already h2{margin:0 0 8px; font-size:18.5px;}
+  .gate p, .done p, .already p{color:var(--muted); font-size:13.5px; line-height:1.7;}
+  .regcode{margin-top:18px; padding:14px 16px; border-radius:14px;
+    background:linear-gradient(90deg, rgba(58,47,158,0.08), rgba(194,59,59,0.10)); border:1.8px solid var(--line);}
   .regcode b{font-size:20px; letter-spacing:.06em; color:var(--navy-2); display:block; margin-top:4px;}
 
-  footer{text-align:center; color:var(--muted); font-size:11.5px; padding:16px 20px 30px;}
-  .hidden{display:none !important;}
+  /* success check + confetti */
+  .check-wrap{ width:84px; height:84px; margin:0 auto 12px; }
+  .check-circle{ stroke:var(--good); stroke-width:4; fill:none; stroke-dasharray:220; stroke-dashoffset:220;
+    animation: draw-circle .55s ease forwards; }
+  .check-mark{ stroke:var(--good); stroke-width:5; fill:none; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:40; stroke-dashoffset:40; animation: draw-check .35s ease .5s forwards; }
+  @keyframes draw-circle{ to{ stroke-dashoffset:0; } }
+  @keyframes draw-check{ to{ stroke-dashoffset:0; } }
+  .confetti{ position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:50; overflow:hidden; }
+  .confetti i{ position:absolute; top:-10px; border-radius:2px; animation-name: fall; animation-timing-function:ease-in; animation-fill-mode:forwards; }
+  @keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:0.9; } }
+
+  /* rules modal */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(15,10,45,0.55); z-index:40;
+    display:flex; align-items:flex-end; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal-sheet{
+    width:100%; max-width:480px; max-height:88vh; background:#fff;
+    border-radius:22px 22px 0 0; display:flex; flex-direction:column; overflow:hidden;
+    transform:translateY(100%); transition:transform .32s cubic-bezier(.22,1,.36,1);
+    box-shadow:0 -14px 40px rgba(0,0,0,0.3);
+  }
+  .modal-overlay.open .modal-sheet{ transform:translateY(0); }
+  .modal-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px;
+    border-bottom:1.6px solid var(--line); }
+  .modal-head b{ font-size:15.5px; }
+  .modal-head button{ background:var(--cream); border:none; width:32px;height:32px; border-radius:50%;
+    font-size:16px; cursor:pointer; color:var(--muted); }
+  .modal-body{ padding:16px 18px; overflow-y:auto; flex:1; }
+  .modal-body img{ width:100%; border-radius:12px; display:block; margin-bottom:10px; border:1.6px solid var(--line); }
+  .modal-body .fallback{ padding:30px 14px; text-align:center; color:var(--muted); font-size:13.5px;
+    background:#fbfbfe; border-radius:12px; border:1.6px dashed var(--line); }
+  .modal-foot{ padding:14px 18px calc(14px + env(safe-area-inset-bottom)); border-top:1.6px solid var(--line); }
+  .modal-agree{
+    display:flex; gap:10px; align-items:center; margin-bottom:14px;
+    background:#fdf3f3; border:1.8px solid #f0c9c9; border-radius:14px; padding:13px 14px;
+    transition:border-color .18s, background .18s;
+  }
+  .modal-agree.checked{ background:#f2fbf6; border-color:#bfe6d1; }
+  .modal-agree input{ margin-top:0; width:22px; height:22px; accent-color:var(--red); flex:0 0 auto; }
+  .modal-agree span{ font-size:13.5px; font-weight:800; line-height:1.55; }
+
+  /* tap-to-preview hint over the rules image */
+  .rules-img-wrap{ position:relative; margin-bottom:10px; border-radius:12px; overflow:hidden; cursor:zoom-in; }
+  .rules-img-wrap img{ margin-bottom:0; }
+  .tap-hint{
+    position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    background:rgba(22,16,70,0.72); color:#fff; padding:8px 16px; border-radius:99px;
+    font-size:12.5px; font-weight:800; pointer-events:none;
+    animation: hint-bounce 1.6s ease-in-out infinite;
+  }
+  .tap-hint .finger{ font-size:18px; line-height:1; }
+  @keyframes hint-bounce{
+    0%,100%{ transform:translate(-50%,0); }
+    50%{ transform:translate(-50%,-6px); }
+  }
+
+  /* fullscreen zoom/pan viewer */
+  .zoom-overlay{
+    position:fixed; inset:0; background:#000; z-index:70;
+    display:flex; flex-direction:column;
+    opacity:0; pointer-events:none; transition:opacity .22s;
+  }
+  .zoom-overlay.open{ opacity:1; pointer-events:auto; }
+  .zoom-top{
+    display:flex; align-items:center; gap:10px; padding:14px 16px;
+    background:rgba(0,0,0,0.55); position:relative; z-index:2;
+  }
+  .zoom-back{
+    display:flex; align-items:center; gap:6px; background:#fff; color:var(--navy-1);
+    border:none; border-radius:99px; padding:9px 18px; font-family:inherit;
+    font-weight:900; font-size:14px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  }
+  .zoom-hint2{ color:rgba(255,255,255,0.75); font-size:11.5px; font-weight:600; margin-inline-start:auto; }
+  .zoom-canvas{ flex:1; overflow:hidden; position:relative; touch-action:none; }
+  .zoom-canvas img{
+    position:absolute; top:0; left:0; max-width:none;
+    transform-origin:0 0; will-change:transform; user-select:none; -webkit-user-drag:none;
+  }
+
+  footer{text-align:center; color:var(--muted); font-size:11px; padding:16px 20px 30px; position:relative; z-index:1;}
 </style>
 </head>
 <body>
+
+<div class="star star-1"></div>
+<div class="star star-2"></div>
+<div class="star star-3"></div>
+<div class="star star-4"></div>
+<div class="star star-5"></div>
+<div class="star star-6"></div>
+<div class="star star-7"></div>
+<div class="star star-8"></div>
+
 <div class="wrap">
 
   <div class="brandbar">
-    <!-- LINE ~127: replace src="school-door.jpg" with a real photo of the school
-         (entrance/door works great). If the file is missing, the navy gradient
-         below shows instead, so nothing breaks. -->
+    <!-- LINE ~232: replace src="school-door.jpg" with a real photo of the school -->
     <img class="bg-photo" src="school-door.jpg" alt="" onerror="this.remove()">
     <div class="bg-overlay"></div>
     <div class="eyebrow">Student Information Form · H.S</div>
-    <!-- LINE ~130: replace src="logo.png" with your school logo file -->
+    <!-- LINE ~235: replace src="logo.png" with your logo file -->
     <img class="logo-img" src="logo.png" alt="Belmahi Samir School logo" onerror="this.style.display='none'">
     <h1>Belmahi Samir School</h1>
     <div class="tagline">Trusted by generations since 1994 · موثوقة عبر الأجيال منذ 1994</div>
@@ -148,12 +311,6 @@
         <h2>التسجيل متاح فقط عبر رمز QR</h2>
         <p>يرجى مسح رمز الاستجابة السريعة الموجود داخل المدرسة لفتح استمارة التسجيل.<br><br>
         Registration is only available by scanning the QR code at school.</p>
-        <div style="margin-top:22px; padding-top:18px; border-top:1.5px dashed var(--line);">
-          <p style="font-size:12px; color:var(--weak); font-weight:700; margin-bottom:8px;">
-            وضع الاختبار فقط — احذف هذا الزر قبل النشر للطلاب<br>TEST MODE ONLY — remove before going live
-          </p>
-          <button type="button" class="btn btn-ghost" style="width:auto; padding:10px 20px;" onclick="testEntry()">🔧 دخول تجريبي · Test entry</button>
-        </div>
       </div>
 
       <!-- already submitted from this phone -->
@@ -162,134 +319,195 @@
         <h2>تم تسجيلك مسبقًا من هذا الهاتف</h2>
         <p>You already registered from this device.</p>
         <div class="regcode">رقم التسجيل · Registration #<b id="prevRegCode"></b></div>
-        <div style="margin-top:22px; padding-top:18px; border-top:1.5px dashed var(--line);">
-          <p style="font-size:12px; color:var(--weak); font-weight:700; margin-bottom:8px;">
-            وضع الاختبار فقط — احذف هذا الزر قبل النشر للطلاب<br>TEST MODE ONLY — remove before going live
-          </p>
-          <button type="button" class="btn btn-ghost" style="width:auto; padding:10px 20px;" onclick="testEntry()">🔧 دخول تجريبي جديد · New test entry</button>
-        </div>
       </div>
 
       <!-- success -->
       <div id="doneView" class="done hidden">
-        <div class="icon">🎉</div>
+        <svg class="check-wrap" viewBox="0 0 90 90">
+          <circle class="check-circle" cx="45" cy="45" r="35"></circle>
+          <polyline class="check-mark" points="28,46 40,58 63,32"></polyline>
+        </svg>
         <h2>تم إرسال التسجيل بنجاح!</h2>
         <p>Your registration was submitted successfully. Please keep your registration number.</p>
         <div class="regcode">رقم التسجيل · Registration #<b id="newRegCode"></b></div>
       </div>
 
-      <!-- the actual form -->
+      <!-- the wizard -->
       <form id="regForm" class="hidden">
 
-        <div class="section">
-          <div class="section-head"><span class="num">A</span> Personal Information</div>
-
-          <div class="field"><label>First Name <span class="req">*</span><span class="ar">الإسم</span></label>
-            <input type="text" name="firstName" required maxlength="30"></div>
-          <div class="field"><label>Last Name <span class="req">*</span><span class="ar">اللقب</span></label>
-            <input type="text" name="lastName" required maxlength="30"></div>
-          <div class="field"><label>Place of Birth <span class="req">*</span><span class="ar">مكان الإزدياد</span></label>
-            <input type="text" name="placeOfBirth" required></div>
-          <div class="field"><label>Date of Birth <span class="req">*</span><span class="ar">تاريخ الإزدياد</span></label>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1.3fr; gap:8px;">
-              <select id="dobDay" required><option value="" disabled selected>يوم Day</option></select>
-              <select id="dobMonth" required><option value="" disabled selected>شهر Month</option></select>
-              <select id="dobYear" required><option value="" disabled selected>سنة Year</option></select>
-            </div>
+        <div class="progress-zone">
+          <div class="progress-label">
+            <span class="step-name" id="stepName">المعلومات الأساسية</span>
+            <span class="step-count" id="stepCount">1 / 5</span>
           </div>
-          <div class="field"><label>Parent's Phone <span class="req">*</span><span class="ar">رقم هاتف الولي</span></label>
-            <input type="tel" name="parentPhone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="0XXXXXXXXX"></div>
-          <div class="field"><label>Student's Phone <span class="req">*</span><span class="ar">رقم هاتف الطالب</span></label>
-            <input type="tel" name="studentPhone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="0XXXXXXXXX"></div>
-          <div class="field"><label>Address <span class="req">*</span><span class="ar">العنوان</span></label>
-            <input type="text" name="address" required></div>
-          <div class="field"><label>High School <span class="req">*</span><span class="ar">الثانوية</span></label>
-            <input type="text" name="highSchool" required></div>
-
-          <div class="field">
-            <label>Stream <span class="req">*</span><span class="ar">الشعبة</span></label>
-            <select name="stream" required>
-              <option value="" disabled selected>—</option>
-              <option value="الرياضيات">الرياضيات · Mathématiques</option>
-              <option value="العلوم التجريبية">العلوم التجريبية · Sciences Expérimentales</option>
-              <option value="تقني رياضي - هندسة ميكانيكية">تقني رياضي - هندسة ميكانيكية</option>
-              <option value="تقني رياضي - هندسة كهربائية">تقني رياضي - هندسة كهربائية</option>
-              <option value="تقني رياضي - هندسة مدنية">تقني رياضي - هندسة مدنية</option>
-              <option value="تقني رياضي - هندسة الطرائق">تقني رياضي - هندسة الطرائق</option>
-            </select>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="dots" id="dots">
+            <span class="active"></span><span></span><span></span><span></span><span></span>
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-head"><span class="num">B</span> Academic Information</div>
+        <div class="steps-viewport">
+          <div class="steps-track" id="stepsTrack">
 
-          <div class="field">
-            <label>Level <span class="req">*</span><span class="ar">المستوى</span></label>
-            <div class="level-row" id="levelRow">
-              <label class="level-opt"><input type="radio" name="level" value="Excellent" required><span class="dot" style="background:var(--excellent)"></span>Excellent · ممتاز</label>
-              <label class="level-opt"><input type="radio" name="level" value="Good"><span class="dot" style="background:var(--good)"></span>Good · جيد</label>
-              <label class="level-opt"><input type="radio" name="level" value="Average"><span class="dot" style="background:var(--avg)"></span>Average · متوسط</label>
-              <label class="level-opt"><input type="radio" name="level" value="Weak"><span class="dot" style="background:var(--weak)"></span>Weak · ضعيف</label>
+            <!-- STEP 1 — basic identity -->
+            <div class="step" data-step="1">
+              <div class="step-title"><span class="ic">1</span>المعلومات الأساسية · Basic info</div>
+
+              <div class="field"><label>First Name <span class="req">*</span><span class="ar">الإسم</span></label>
+                <input type="text" name="firstName" required maxlength="30">
+                <div class="err-msg">الرجاء إدخال الإسم</div></div>
+
+              <div class="field"><label>Last Name <span class="req">*</span><span class="ar">اللقب</span></label>
+                <input type="text" name="lastName" required maxlength="30">
+                <div class="err-msg">الرجاء إدخال اللقب</div></div>
+
+              <div class="field"><label>Place of Birth <span class="req">*</span><span class="ar">مكان الإزدياد</span></label>
+                <input type="text" name="placeOfBirth" required maxlength="50">
+                <div class="err-msg">الرجاء إدخال مكان الإزدياد</div></div>
+
+              <div class="field"><label>Date of Birth <span class="req">*</span><span class="ar">تاريخ الإزدياد</span></label>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1.3fr; gap:8px;">
+                  <select id="dobDay" required><option value="" disabled selected>يوم Day</option></select>
+                  <select id="dobMonth" required><option value="" disabled selected>شهر Month</option></select>
+                  <select id="dobYear" required><option value="" disabled selected>سنة Year</option></select>
+                </div>
+                <div class="err-msg" id="dobErr">تاريخ غير صالح أو غير مكتمل</div>
+              </div>
             </div>
-          </div>
 
-          <div class="field">
-            <label>Passing Average (/20) <span class="req">*</span><span class="ar">معدل الإنتقال</span></label>
-            <input type="number" name="average" min="0" max="20" step="0.01" required>
-          </div>
+            <!-- STEP 2 — contact -->
+            <div class="step" data-step="2">
+              <div class="step-title"><span class="ic">2</span>التواصل · Contact</div>
 
-          <div class="field">
-            <label>Subjects needed <span class="req">*</span><span class="ar">المواد (اختر واحدة على الأقل)</span></label>
-            <div class="chk-row" id="subjectsRow">
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Physics">Physics · فيزياء</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Science">Science · علوم</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Mathematics">Mathematics · رياضيات</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Mechanics">Mechanics · ميكانيك</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Electricity">Electricity · كهرباء</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Civil Engineering">Civil Eng. · هندسة مدنية</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="Arabic">Arabic · عربية</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="English">English · انجليزية</label>
-              <label class="chk-opt"><input type="checkbox" name="subj" value="History">History · تاريخ</label>
+              <div class="field"><label>Parent's Phone <span class="req">*</span><span class="ar">رقم هاتف الولي</span></label>
+                <input type="tel" name="parentPhone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="0XXXXXXXXX">
+                <div class="err-msg">يجب أن يكون 10 أرقام بالضبط</div></div>
+
+              <div class="field"><label>Student's Phone <span class="req">*</span><span class="ar">رقم هاتف الطالب</span></label>
+                <input type="tel" name="studentPhone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="0XXXXXXXXX">
+                <div class="err-msg">يجب أن يكون 10 أرقام بالضبط</div></div>
+
+              <div class="field"><label>Address <span class="req">*</span><span class="ar">العنوان</span></label>
+                <input type="text" name="address" required maxlength="120">
+                <div class="err-msg">الرجاء إدخال العنوان</div></div>
+
+              <div class="field"><label>High School <span class="req">*</span><span class="ar">الثانوية</span></label>
+                <input type="text" name="highSchool" required maxlength="60">
+                <div class="err-msg">الرجاء إدخال الثانوية</div></div>
+
+              <div class="field">
+                <label>Stream <span class="req">*</span><span class="ar">الشعبة</span></label>
+                <select name="stream" required>
+                  <option value="" disabled selected>—</option>
+                  <option value="الرياضيات">الرياضيات · Mathématiques</option>
+                  <option value="العلوم التجريبية">العلوم التجريبية · Sciences Expérimentales</option>
+                  <option value="تقني رياضي - هندسة ميكانيكية">تقني رياضي - هندسة ميكانيكية</option>
+                  <option value="تقني رياضي - هندسة كهربائية">تقني رياضي - هندسة كهربائية</option>
+                  <option value="تقني رياضي - هندسة مدنية">تقني رياضي - هندسة مدنية</option>
+                  <option value="تقني رياضي - هندسة الطرائق">تقني رياضي - هندسة الطرائق</option>
+                </select>
+                <div class="err-msg">الرجاء اختيار الشعبة</div>
+              </div>
             </div>
-          </div>
 
-          <div class="field">
-            <label>Additional note (optional)<span class="ar">ملاحظة الولي (غير إجبارية)</span></label>
-            <textarea name="note" placeholder="اكتب أي معلومة إضافية تريد إخبار المدرسة بها..."></textarea>
+            <!-- STEP 3 — academic -->
+            <div class="step" data-step="3">
+              <div class="step-title"><span class="ic">3</span>المستوى الأكاديمي · Academic</div>
+
+              <div class="field">
+                <label>Level <span class="req">*</span><span class="ar">المستوى</span></label>
+                <div class="level-row" id="levelRow">
+                  <label class="level-opt"><input type="radio" name="level" value="Excellent" required><span class="dot" style="background:var(--excellent)"></span>Excellent · ممتاز</label>
+                  <label class="level-opt"><input type="radio" name="level" value="Good"><span class="dot" style="background:var(--good)"></span>Good · جيد</label>
+                  <label class="level-opt"><input type="radio" name="level" value="Average"><span class="dot" style="background:var(--avg)"></span>Average · متوسط</label>
+                  <label class="level-opt"><input type="radio" name="level" value="Weak"><span class="dot" style="background:var(--weak)"></span>Weak · ضعيف</label>
+                </div>
+                <div class="err-msg" id="levelErr">الرجاء اختيار المستوى</div>
+              </div>
+
+              <div class="field">
+                <label>Passing Average (/20) <span class="req">*</span><span class="ar">معدل الإنتقال</span></label>
+                <input type="number" name="average" min="0" max="20" step="0.01" required>
+                <div class="err-msg">الرجاء إدخال المعدل</div>
+              </div>
+
+              <div class="field">
+                <label>Subjects needed <span class="req">*</span><span class="ar">المواد (اختر واحدة على الأقل)</span></label>
+                <div class="chk-row" id="subjectsRow">
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Physics">Physics · فيزياء</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Science">Science · علوم</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Mathematics">Mathematics · رياضيات</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Mechanics">Mechanics · ميكانيك</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Electricity">Electricity · كهرباء</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Civil Engineering">Civil Eng. · هندسة مدنية</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="Arabic">Arabic · عربية</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="English">English · انجليزية</label>
+                  <label class="chk-opt"><input type="checkbox" name="subj" value="History">History · تاريخ</label>
+                </div>
+                <div class="err-msg" id="subjErr">اختر مادة واحدة على الأقل</div>
+              </div>
+
+              <div class="field">
+                <label>Additional note (optional)<span class="ar">ملاحظة الولي (غير إجبارية)</span></label>
+                <textarea name="note" maxlength="300" placeholder="اكتب أي معلومة إضافية تريد إخبار المدرسة بها..."></textarea>
+              </div>
+            </div>
+
+            <!-- STEP 4 — photo & signature -->
+            <div class="step" data-step="4">
+              <div class="step-title"><span class="ic">4</span>الصورة والتوقيع · Photo &amp; Signature</div>
+
+              <div class="field">
+                <label>Student photo (optional)<span class="ar">صورة الطالب (غير إجبارية)</span></label>
+                <div class="photo-box">
+                  <img id="photoPreview" class="photo-preview" style="display:none;">
+                  <label class="photo-btn" for="photoInput">📷 اختر / التقط صورة</label>
+                  <input type="file" id="photoInput" accept="image/*">
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Signature <span class="req">*</span><span class="ar">التوقيع (ارسم بإصبعك)</span></label>
+                <div class="sig-wrap">
+                  <canvas id="sigPad" width="600" height="220"></canvas>
+                  <div class="sig-actions"><button type="button" onclick="clearSig()">مسح · Clear</button></div>
+                </div>
+                <div class="err-msg" id="sigErr">الرجاء التوقيع أعلاه</div>
+              </div>
+            </div>
+
+            <!-- STEP 5 — rules & confirm -->
+            <div class="step" data-step="5">
+              <div class="step-title"><span class="ic">5</span>التأكيد النهائي · Final confirmation</div>
+
+              <div class="field">
+                <button type="button" class="rules-btn" id="rulesBtn" onclick="openRules()">
+                  <span class="ric" id="rulesIcon">📖</span>
+                  <span class="rtxt">
+                    <b id="rulesTitle">القانون الداخلي</b>
+                    <span id="rulesSub">اضغط للاطلاع والموافقة · tap to view &amp; accept</span>
+                  </span>
+                  <span class="chev">›</span>
+                </button>
+              </div>
+
+              <label class="agree">
+                <input type="checkbox" id="agreeChk" required>
+                <span class="txt">I confirm the information above is accurate.
+                  <span class="ar">أؤكد أن المعلومات أعلاه صحيحة ومكتوبة من طرفي / ولي أمري.</span>
+                </span>
+              </label>
+            </div>
+
           </div>
         </div>
 
-        <div class="section">
-          <div class="section-head"><span class="num">C</span> Photo &amp; Signature</div>
+        <div class="status" id="formStatus"></div>
 
-          <div class="field">
-            <label>Student photo (optional)<span class="ar">صورة الطالب (غير إجبارية)</span></label>
-            <div class="photo-box">
-              <img id="photoPreview" class="photo-preview" style="display:none;">
-              <label class="photo-btn" for="photoInput">📷 اختر / التقط صورة</label>
-              <input type="file" id="photoInput" accept="image/*">
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Signature <span class="req">*</span><span class="ar">التوقيع (ارسم بإصبعك)</span></label>
-            <div class="sig-wrap">
-              <canvas id="sigPad" width="600" height="220"></canvas>
-              <div class="sig-actions"><button type="button" onclick="clearSig()">مسح · Clear</button></div>
-            </div>
-          </div>
-
-          <label class="agree">
-            <input type="checkbox" id="agreeChk" required>
-            <span class="txt">I confirm the information above is accurate.
-              <span class="ar">أؤكد أن المعلومات أعلاه صحيحة ومكتوبة من طرفي / ولي أمري.</span>
-            </span>
-          </label>
-        </div>
-
-        <div class="submit-bar">
-          <button type="submit" class="btn btn-primary" id="submitBtn">إرسال التسجيل · Submit</button>
-          <div class="status" id="formStatus"></div>
+        <div class="nav-bar">
+          <button type="button" class="btn btn-ghost hidden" id="backBtn" onclick="prevStep()" style="flex:0 0 auto; padding:15px 22px;">‹ رجوع</button>
+          <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">متابعة · Next ›</button>
+          <button type="submit" class="btn btn-primary hidden" id="submitBtn" disabled>إرسال التسجيل · Submit</button>
         </div>
       </form>
 
@@ -299,12 +517,47 @@
   <footer>Belmahi Samir School · 35 Rue Aspt, Maoued Ahmed (Mirauchaux), Oran · 0772 39 62 50</footer>
 </div>
 
+<!-- internal rules modal -->
+<div class="modal-overlay" id="rulesModal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <b>القانون الداخلي · Internal Regulations</b>
+      <button type="button" onclick="closeRules()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- LINE ~469: replace src="school-rules.jpg" with a photo of your internal
+           regulations document. If missing, a fallback message shows instead. -->
+      <div class="rules-img-wrap" id="rulesImgWrap" onclick="openZoom()">
+        <img id="rulesImg" src="school-rules.jpg" alt="القانون الداخلي" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',innerHTML:'📄 ضع صورة القانون الداخلي هنا باسم school-rules.jpg<br>Internal regulations photo not found'}))">
+        <div class="tap-hint"><span class="finger">👆</span>اضغط للمعاينة · tap to preview</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <label class="modal-agree">
+        <input type="checkbox" id="rulesCheck" onchange="onRulesCheck()">
+        <span>أوافق على جميع بنود القانون الداخلي<br>I accept all the internal regulations</span>
+      </label>
+      <button type="button" class="btn btn-primary" style="width:100%;" id="rulesCloseBtn" onclick="closeRules()" disabled>تم · Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- fullscreen zoom/pan viewer for the rules image -->
+<div class="zoom-overlay" id="zoomOverlay">
+  <div class="zoom-top">
+    <button type="button" class="zoom-back" onclick="closeZoom()">‹ رجوع للموافقة · Back to accept</button>
+    <span class="zoom-hint2">قرّص للتكبير · اسحب للتحريك</span>
+  </div>
+  <div class="zoom-canvas" id="zoomCanvas">
+    <img id="zoomImg" src="school-rules.jpg" alt="القانون الداخلي">
+  </div>
+</div>
+
 <script>
-/* ====================== CONFIG ======================
-   Paste your Google Apps Script Web App URL below (see setup guide). */
+/* ====================== CONFIG ====================== */
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyO0RW23Rl0g2h1HWiHsHvpDiCcn6P9wPKYWFnp4X_oA3ZEvl4DpHzkPJCSegkzQ9NE7Q/exec";
 const STORAGE_KEY = "bss_registered_v1";
-/* ===================================================== */
+/* ====================================================== */
 
 function el(id){return document.getElementById(id);}
 function showOnly(id){
@@ -313,38 +566,18 @@ function showOnly(id){
   });
 }
 
-// TEST MODE ONLY — lets you open the form without a real QR scan and without
-// editing the URL. Delete this whole function (and its two buttons in the
-// HTML above) before putting this page in front of real students.
-function testEntry(){
-  localStorage.removeItem(STORAGE_KEY);
-  showOnly("regForm");
-}
-
 // ---- QR gate check ----
 (function init(){
   const params = new URLSearchParams(location.search);
   const cameFromQr = params.get("qr") === "1";
-
-  // testing-only escape hatch: ?qr=1&reset=1 clears the "already registered" lock
-  // on this device. Remove this block (or the &reset=1 you use) once the school
-  // goes live, so real students can't use it to bypass the one-submission lock.
-  if(params.get("reset") === "1"){
-    localStorage.removeItem(STORAGE_KEY);
-  }
-
   const prev = localStorage.getItem(STORAGE_KEY);
-
   if(prev){
     const data = JSON.parse(prev);
     el("prevRegCode").textContent = data.regCode;
     showOnly("alreadyView");
     return;
   }
-  if(!cameFromQr){
-    showOnly("gateView");
-    return;
-  }
+  if(!cameFromQr){ showOnly("gateView"); return; }
   showOnly("regForm");
 })();
 
@@ -369,9 +602,7 @@ function testEntry(){
 // ---- phone fields: digits only, max 10 ----
 ['parentPhone','studentPhone'].forEach(name=>{
   const inp = document.querySelector(`input[name=${name}]`);
-  inp.addEventListener('input', ()=>{
-    inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 10);
-  });
+  inp.addEventListener('input', ()=>{ inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 10); });
 });
 
 // ---- level chip highlight ----
@@ -380,6 +611,10 @@ document.querySelectorAll('.level-opt input').forEach(inp=>{
     document.querySelectorAll('.level-opt').forEach(l=>l.classList.remove('sel'));
     inp.closest('.level-opt').classList.add('sel');
   });
+});
+// ---- subject chip highlight ----
+document.querySelectorAll('.chk-opt input[name=subj]').forEach(inp=>{
+  inp.addEventListener('change', ()=>{ inp.closest('.chk-opt').classList.toggle('sel', inp.checked); });
 });
 
 // ---- signature pad ----
@@ -434,7 +669,214 @@ function compressImage(file, maxDim, quality){
   });
 }
 
-// ---- submit ----
+// ================== WIZARD NAVIGATION ==================
+const stepNames = [
+  "المعلومات الأساسية", "التواصل", "المستوى الأكاديمي", "الصورة والتوقيع", "التأكيد النهائي"
+];
+const totalSteps = 5;
+let currentStep = 1;
+
+function updateChrome(){
+  el('stepsTrack').style.transform = `translateX(${(currentStep-1) * 100}%)`;
+  el('stepName').textContent = stepNames[currentStep-1];
+  el('stepCount').textContent = `${currentStep} / ${totalSteps}`;
+  el('progressFill').style.width = (currentStep/totalSteps*100) + "%";
+  document.querySelectorAll('#dots span').forEach((d,i)=>{
+    d.classList.toggle('dot-done', i < currentStep-1);
+    d.classList.toggle('active', i === currentStep-1);
+  });
+  el('backBtn').classList.toggle('hidden', currentStep === 1);
+  el('nextBtn').classList.toggle('hidden', currentStep === totalSteps);
+  el('submitBtn').classList.toggle('hidden', currentStep !== totalSteps);
+  el('formStatus').textContent = "";
+  el('formStatus').className = "status";
+}
+// RTL note: steps-track uses translateX; since page is RTL the visual
+// direction still reads naturally because flex children follow dir=rtl.
+document.documentElement.dir = "rtl";
+
+function clearFieldError(field){ field.classList.remove('invalid'); }
+function markFieldError(field){ field.classList.add('invalid'); }
+
+function validateStep(n){
+  let ok = true;
+  const stepEl = document.querySelector(`.step[data-step="${n}"]`);
+
+  stepEl.querySelectorAll('.field').forEach(f=>{
+    const input = f.querySelector('input:not([type=checkbox]):not([type=radio]), select');
+    if(input && input.hasAttribute('required')){
+      if(!input.checkValidity()){ markFieldError(f); ok = false; } else { clearFieldError(f); }
+    }
+  });
+
+  if(n === 1){
+    const d = el('dobDay').value, m = el('dobMonth').value, y = el('dobYear').value;
+    const dobField = el('dobDay').closest('.field');
+    if(!d || !m || !y){ dobField.classList.add('invalid'); ok = false; }
+    else if(new Date(`${y}-${m}-${d}`) > new Date("2026-12-31")){ dobField.classList.add('invalid'); ok = false; }
+    else { dobField.classList.remove('invalid'); }
+  }
+  if(n === 2){
+    const pp = document.querySelector('input[name=parentPhone]');
+    const sp = document.querySelector('input[name=studentPhone]');
+    if(!/^[0-9]{10}$/.test(pp.value.trim())){ markFieldError(pp.closest('.field')); ok = false; }
+    if(!/^[0-9]{10}$/.test(sp.value.trim())){ markFieldError(sp.closest('.field')); ok = false; }
+  }
+  if(n === 3){
+    const levelPicked = document.querySelector('input[name=level]:checked');
+    const levelField = document.getElementById('levelErr').closest('.field');
+    if(!levelPicked){ levelField.classList.add('invalid'); ok = false; } else { levelField.classList.remove('invalid'); }
+
+    const subjects = document.querySelectorAll('input[name=subj]:checked');
+    const subjField = document.getElementById('subjErr').closest('.field');
+    if(subjects.length === 0){ subjField.classList.add('invalid'); ok = false; } else { subjField.classList.remove('invalid'); }
+  }
+  if(n === 4){
+    const sigField = document.getElementById('sigErr').closest('.field');
+    if(!hasSig){ sigField.classList.add('invalid'); ok = false; } else { sigField.classList.remove('invalid'); }
+  }
+  return ok;
+}
+
+function nextStep(){
+  if(!validateStep(currentStep)){
+    el('formStatus').textContent = "الرجاء إكمال الحقول المطلوبة أعلاه · please complete the required fields above";
+    el('formStatus').className = "status err";
+    return;
+  }
+  if(currentStep < totalSteps){ currentStep++; updateChrome(); updateSubmitState(); }
+}
+function prevStep(){
+  if(currentStep > 1){ currentStep--; updateChrome(); }
+}
+updateChrome();
+
+// ================== INTERNAL RULES MODAL ==================
+let rulesAccepted = false;
+function openRules(){ el('rulesModal').classList.add('open'); }
+function closeRules(){ el('rulesModal').classList.remove('open'); }
+function onRulesCheck(){
+  const checked = el('rulesCheck').checked;
+  el('rulesCloseBtn').disabled = !checked;
+  el('rulesCheck').closest('.modal-agree').classList.toggle('checked', checked);
+  if(checked){
+    rulesAccepted = true;
+    el('rulesBtn').classList.add('accepted');
+    el('rulesIcon').textContent = "✅";
+    el('rulesTitle').textContent = "تم قبول القانون الداخلي";
+    el('rulesSub').textContent = "Regulations accepted";
+    updateSubmitState();
+  }
+}
+
+// ---- fullscreen pan/zoom viewer for the rules image ----
+let zScale = 1, zX = 0, zY = 0;
+let zPinchDist = null, zPanStart = null, zLastTap = 0;
+
+function applyZoomTransform(){
+  el('zoomImg').style.transform = `translate(${zX}px, ${zY}px) scale(${zScale})`;
+}
+function resetZoom(){
+  zScale = 1; zX = 0; zY = 0;
+  const canvas = el('zoomCanvas');
+  const img = el('zoomImg');
+  // center the image once it has a natural size
+  const place = ()=>{
+    zX = (canvas.clientWidth - img.naturalWidth) / 2;
+    zY = (canvas.clientHeight - img.naturalHeight) / 2;
+    // if the image is bigger than the screen, fit it to width initially
+    if(img.naturalWidth > canvas.clientWidth){
+      zScale = canvas.clientWidth / img.naturalWidth;
+      zX = 0;
+      zY = (canvas.clientHeight - img.naturalHeight*zScale) / 2;
+    }
+    applyZoomTransform();
+  };
+  if(img.complete && img.naturalWidth) place(); else img.onload = place;
+}
+function openZoom(){
+  const src = el('rulesImg') ? el('rulesImg').src : null;
+  if(src) el('zoomImg').src = src;
+  el('zoomOverlay').classList.add('open');
+  resetZoom();
+}
+function closeZoom(){ el('zoomOverlay').classList.remove('open'); }
+
+function dist(t1, t2){ return Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY); }
+
+const zCanvas = el('zoomCanvas');
+zCanvas.addEventListener('touchstart', (e)=>{
+  if(e.touches.length === 2){
+    zPinchDist = dist(e.touches[0], e.touches[1]);
+  }else if(e.touches.length === 1){
+    zPanStart = { x:e.touches[0].clientX - zX, y:e.touches[0].clientY - zY };
+    const now = Date.now();
+    if(now - zLastTap < 300){ // double-tap toggles zoom
+      zScale = zScale > 1 ? 1 : 2.2;
+      applyZoomTransform();
+    }
+    zLastTap = now;
+  }
+}, {passive:true});
+zCanvas.addEventListener('touchmove', (e)=>{
+  if(e.touches.length === 2 && zPinchDist){
+    const nd = dist(e.touches[0], e.touches[1]);
+    const factor = nd / zPinchDist;
+    zScale = Math.min(6, Math.max(0.5, zScale * factor));
+    zPinchDist = nd;
+    applyZoomTransform();
+    e.preventDefault();
+  }else if(e.touches.length === 1 && zPanStart){
+    zX = e.touches[0].clientX - zPanStart.x;
+    zY = e.touches[0].clientY - zPanStart.y;
+    applyZoomTransform();
+    e.preventDefault();
+  }
+}, {passive:false});
+zCanvas.addEventListener('touchend', ()=>{ zPinchDist = null; zPanStart = null; });
+
+// desktop support: wheel to zoom, drag to pan
+let zDragging = false, zDragStart = null;
+zCanvas.addEventListener('wheel', (e)=>{
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.12 : 0.89;
+  zScale = Math.min(6, Math.max(0.5, zScale * factor));
+  applyZoomTransform();
+}, {passive:false});
+zCanvas.addEventListener('mousedown', (e)=>{ zDragging = true; zDragStart = { x:e.clientX - zX, y:e.clientY - zY }; });
+window.addEventListener('mousemove', (e)=>{
+  if(!zDragging) return;
+  zX = e.clientX - zDragStart.x; zY = e.clientY - zDragStart.y;
+  applyZoomTransform();
+});
+window.addEventListener('mouseup', ()=>{ zDragging = false; });
+
+document.getElementById('agreeChk').addEventListener('change', updateSubmitState);
+function updateSubmitState(){
+  const agreed = document.getElementById('agreeChk').checked;
+  el('submitBtn').disabled = !(rulesAccepted && agreed && hasSig);
+}
+
+// ================== CONFETTI ==================
+function fireConfetti(){
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  const colors = ['#c23b3b','#3a2f9e','#e8c547','#3aa876','#161046'];
+  for(let i=0; i<28; i++){
+    const p = document.createElement('i');
+    const size = 6 + Math.random()*6;
+    p.style.width = size+'px'; p.style.height = (size*0.4)+'px';
+    p.style.left = Math.random()*100 + '%';
+    p.style.background = colors[i % colors.length];
+    p.style.animationDuration = (2.2 + Math.random()*1.6) + 's';
+    p.style.animationDelay = (Math.random()*0.4) + 's';
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(()=> box.remove(), 4200);
+}
+
+// ================== SUBMIT ==================
 function genRegCode(){
   const n = Math.floor(1000+Math.random()*9000);
   return "BSS-" + new Date().getFullYear() + "-" + n;
@@ -442,47 +884,18 @@ function genRegCode(){
 
 el('regForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
+  if(!validateStep(4)) { currentStep = 4; updateChrome(); return; }
+  if(!rulesAccepted){
+    el('formStatus').textContent = "الرجاء الموافقة على القانون الداخلي أولاً · please accept the internal regulations first";
+    el('formStatus').className = "status err";
+    return;
+  }
   const statusEl = el('formStatus');
   const btn = el('submitBtn');
-
   const f = e.target;
 
-  if(!/^[0-9]{10}$/.test(f.parentPhone.value.trim())){
-    statusEl.textContent = "رقم هاتف الولي يجب أن يكون 10 أرقام بالضبط · parent phone must be exactly 10 digits";
-    statusEl.className = "status err";
-    return;
-  }
-  if(!/^[0-9]{10}$/.test(f.studentPhone.value.trim())){
-    statusEl.textContent = "رقم هاتف الطالب يجب أن يكون 10 أرقام بالضبط · student phone must be exactly 10 digits";
-    statusEl.className = "status err";
-    return;
-  }
-  const dobDay = document.getElementById('dobDay').value;
-  const dobMonth = document.getElementById('dobMonth').value;
-  const dobYear = document.getElementById('dobYear').value;
-  if(!dobDay || !dobMonth || !dobYear){
-    statusEl.textContent = "الرجاء اختيار تاريخ الإزدياد كاملاً · please select a complete date of birth";
-    statusEl.className = "status err";
-    return;
-  }
-  const dobValue = `${dobYear}-${dobMonth}-${dobDay}`;
-  if(new Date(dobValue) > new Date("2026-12-31")){
-    statusEl.textContent = "تاريخ الإزدياد غير صالح · date of birth cannot be after 2026";
-    statusEl.className = "status err";
-    return;
-  }
-
+  const dobValue = `${el('dobYear').value}-${el('dobMonth').value}-${el('dobDay').value}`;
   const subjects = Array.from(f.querySelectorAll('input[name=subj]:checked')).map(i=>i.value);
-  if(subjects.length === 0){
-    statusEl.textContent = "اختر مادة واحدة على الأقل · pick at least one subject";
-    statusEl.className = "status err";
-    return;
-  }
-  if(!hasSig){
-    statusEl.textContent = "الرجاء التوقيع · please sign above";
-    statusEl.className = "status err";
-    return;
-  }
   const levelInp = f.querySelector('input[name=level]:checked');
 
   if(APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
@@ -526,6 +939,7 @@ el('regForm').addEventListener('submit', async (e)=>{
     localStorage.setItem(STORAGE_KEY, JSON.stringify({regCode: regCode, at: new Date().toISOString()}));
     el('newRegCode').textContent = regCode;
     showOnly('doneView');
+    fireConfetti();
   }catch(err){
     console.error(err);
     statusEl.textContent = "حدث خطأ، تحقق من الاتصال وحاول مجددا · network error, try again";
