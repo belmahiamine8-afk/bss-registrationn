@@ -31,8 +31,8 @@
     clip-path: polygon(50% 0%, 61% 35%, 100% 50%, 61% 65%, 50% 100%, 39% 65%, 0% 50%, 39% 35%);
     animation: twinkle 6.5s ease-in-out infinite; filter:drop-shadow(0 1px 3px rgba(0,0,0,0.25)); }
   @keyframes twinkle{
-    0%,100%{ transform:scale(0.85) rotate(0deg); opacity:0.18; }
-    50%{ transform:scale(1.05) rotate(8deg); opacity:0.5; }
+    0%,100%{ transform:scale(0.85) rotate(0deg); opacity:0.14; }
+    50%{ transform:scale(1.05) rotate(8deg); opacity:0.42; }
   }
   .star-1{ width:14px; height:14px; top:8%;  right:10%; background:var(--red);    animation-delay:0s; }
   .star-2{ width:9px;  height:9px;  top:20%; right:26%; background:var(--indigo); animation-delay:1.2s; }
@@ -382,6 +382,10 @@
               <div class="field"><label>Last Name <span class="req">*</span><span class="ar">اللقب</span></label>
                 <input type="text" name="lastName" required maxlength="30">
                 <div class="err-msg">الرجاء إدخال اللقب</div></div>
+
+              <div class="scroll-hint" aria-hidden="true">
+                <span class="chev">⌄</span><span class="chev chev2">⌄</span>
+              </div>
 
               <div class="field"><label>Place of Birth <span class="req">*</span><span class="ar">مكان الإزدياد</span></label>
                 <input type="text" name="placeOfBirth" required maxlength="50">
